@@ -1,0 +1,72 @@
+definitions:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: JWT
+      description: bearer auth
+      name: Profiles
+      in: header
+    demouser:
+      type: bear
+  register:
+    required:
+      - userName
+      - password 
+    properties:
+      userName:
+        type: string
+      countryCode:
+        type: string
+      mobileNumber:
+        type: string
+      email: 
+        type: string
+      password: 
+        type: string
+      dob:
+        type: string
+      gender:
+        type: string
+
+
+  editProfile:
+    properties:
+      bio: 
+        type: string
+      twitterName:
+        type: string
+      facebookName: 
+        type: string
+      personalURL:
+         type: string
+  
+
+  forgotPassword:
+    required:
+      - email
+    properties:
+      email:
+        type: string
+
+  resetPassword:
+    required:
+      - newPassword
+    properties:
+      newPassword:
+        type: string
+
+  login:
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+      password: 
+        type: string
+
+
+
+
+  
+  
