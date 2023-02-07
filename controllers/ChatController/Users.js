@@ -39,31 +39,64 @@ const getFriends = async(req, res) => {
 
 }
 
-
+//follower put api
 const follow = async(req, res) => {
-  if (req.body.userId !== req.params.id) {
+  if (req.body.userId !== req.query.followerId) {
     try {
-      const user = await profileModel.findById(req.params.id);
+      const user = await profileModel.findById(req.query.followerId);
       const currentUser = await profileModel.findById(req.body.userId);
       if (!user.followers.includes(req.body.userId)) {
         await user.updateOne({ $push: { followers: req.body.userId } });
-        await currentUser.updateOne({ $push: { followings: req.params.id } });
-        res.status(200).json("user has been followed");
+        console.log(user)
+        await currentUser.updateOne({ $push: { followings: req.query.followerId } });
+        
+        
+        res.status(200).json( {success: true,message: " successfully follow", responseResult: currentUser});
       } else {
-        res.status(403).json("you allready follow this user");
+        res.status(201).json({success: false,message: "you allready follow this user",});
       }
     } catch (err) {
       res.status(500).json(err);
     }
   } else {
-    res.status(403).json("you cant follow yourself");
+    res.status(403).json({success: false, message:"you cant follow yourself"});
+  }
+}
+
+
+//Unfollow put api
+const unFollow = async(req, res) => {
+  const followerId = req.query.followerId;
+  const  userId  = req.body.userId;
+
+  if(userId === followerId)
+  {
+    res.status(403).json({success: false, message:"Action Forbidden"})
+  }
+  else{
+    try {
+      const unFollowUser = await profileModel.findById(followerId)
+      const unFollowingUser = await profileModel.findById(userId)
+      if (unFollowUser.followers.includes(userId))
+      {
+        await unFollowUser.updateOne({$pull : {followers: userId}})
+        await unFollowingUser.updateOne({$pull : {followings: followerId}})
+        res.status(200).json( {success: true,message: " Unfollowed Successfully!"})
+      }
+      else{
+        res.status(403).json( {success: false, message:"You are not following this User"})
+      }
+    } catch (error) {
+      res.status(500).json(error)
+    }
   }
 }
 
 module.exports = {
    getUser,
    getFriends,
-   follow
+   follow,
+   unFollow
    
 }
 

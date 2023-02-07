@@ -8,14 +8,7 @@ const {
     getNftCollectionByChainNameAndUserName,
     updateNftNameOrDescription,
     getNftByNftCollectionId,
-    toggleLikeNft,
-    mostLikeNft,
-    mostViewNft,
-    recentlyListedNft,
-    hideToggleNft,
-    getAllHideNft,
-    pinnedToggleNft,
-    getAllPinnedNftByUserName,
+    
     getAllNftByUserName
 } =require('../controllers/nftCollectionController');
 const {verifyToken}=require('../middleware/auth');
@@ -175,97 +168,11 @@ router.get("/getNftCollectionByChainNameAndUserName",getNftCollectionByChainName
  *       501:
  *         description: Something went wrong!
  */
-router.put("/toggleLike",verifyToken,toggleLikeNft)
-router.get("/mostLikeNft",mostLikeNft);
-router.get("/mostViewNft",mostViewNft);
-router.get("/recentlyListedNft",recentlyListedNft);
 
-/**
- * @swagger
- * /api/v1/nftCollection/hideToggleNft:
- *   put:
- *     tags:
- *       - NftCollections
- *     description: hide or unhide nft collection by nftCollectionId
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: id
- *         description: nftCollectionId required.
- *         in: formData
- *         required: true
- *     responses:
- *       200:
- *         description: nft hide/unhide successfully.
- *       500:
- *         description: Internal Server Error
- *       501:
- *         description: Something went wrong!
- */
-router.put("/hideToggleNft",verifyToken,hideToggleNft);
-/**
- * @swagger
- * /api/v1/nftCollection/getAllHideNft:
- *   get:
- *     tags:
- *       - NftCollections
- *     description: get your all hide nft collection
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: Thanks,Your nft fetch successfully.
- *       500:
- *         description: Internal Server Error
- *       501:
- *         description: Something went wrong!
- */
-router.get("/getAllHideNft",verifyToken,getAllHideNft);
 
-/**
- * @swagger
- * /api/v1/nftCollection/pinnedToggleNft:
- *   put:
- *     tags:
- *       - NftCollections
- *     description: pin or unpin nft collection by nftCollectionId
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: id
- *         description: nftCollectionId required.
- *         in: formData
- *         required: true
- *     responses:
- *       200:
- *         description: nft pin/unpin successfully.
- *       500:
- *         description: Internal Server Error
- *       501:
- *         description: Something went wrong!
- */
-router.put("/pinnedToggleNft",verifyToken,pinnedToggleNft);
-/**
- * @swagger
- * /api/v1/nftCollection/getAllPinnedNftByUserName:
- *   get:
- *     tags:
- *       - NftCollections
- *     description: get your all pinned nft collection by userName
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: userName
- *         description: userName required.
- *         in: formData
- *     responses:
- *       200:
- *         description: Thanks,Your pin nft fetch successfully.
- *       500:
- *         description: Internal Server Error
- *       501:
- *         description: Something went wrong!
- */
-router.get("/getAllPinnedNftByUserName",getAllPinnedNftByUserName)
+
+
+
+
 
 module.exports=router

@@ -5,7 +5,6 @@ const connectDB = async (DATABASE_URL) => {
     const DB_OPTIONS = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      // dbName: "lazyNft-redesign",
       dbName: "MongoPeek",
      
        

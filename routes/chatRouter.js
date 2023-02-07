@@ -8,7 +8,7 @@ const {AddConversation, getConversation, getFind} = require("../controllers/Chat
 const {AddMessage, getMessage} = require ("../controllers/ChatController/Message")
 const {AddPost, putPost, like} = require("../controllers/ChatController/Post")
 const {AddComments, getcomments} = require("../controllers/ChatController/Comments")
-const {getUser,getFriends, follow } = require("../controllers/ChatController/Users")
+const {getUser,getFriends, follow , unFollow} = require("../controllers/ChatController/Users")
 
 
 
@@ -175,7 +175,8 @@ router.put("/like/:id", like)
 
 
 router.get("/getUser", getUser)
-router.put("/follow/:id", follow)
+router.put("/follow", follow)
+router.put("/unFollow", unFollow)
 router.get("/getFriends/:userId", getFriends)
 
 

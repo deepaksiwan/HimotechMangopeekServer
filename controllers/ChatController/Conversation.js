@@ -1,31 +1,37 @@
 
 const Conversation = require("../../models/chatModels/Conversation");
 
-//Add Conversation
-const AddConversation = (req, res) => {
-   const Conversationschema = new Conversation({
-      members:[req.body.senderId,req.body.receiverId]
-      
-   })
-   Conversationschema.save()
-      .then(result => {
-         res.status(200).json({
-            success: true,
-            message: "successfull",
-            result: result,
 
-         })
-      })
-      .catch(err => {
-         res.status(500).json({
-            success: false,
-            message: "failed",
-            error: err,
 
-         })
-      })
 
-}
+const AddConversation = async (req, res) => {
+   try {
+      const allreadymember = await Conversation.findOne({
+         members: [req.body.senderId, req.body.receiverId],
+      });
+     
+      if (allreadymember) {
+         res.status(404).json({ success: false, responseMessage: "Allready add your Friends", });
+      }
+      else {
+         const Conversationschema = new Conversation({
+            members: [req.body.senderId, req.body.receiverId],
+         });
+
+         const savedata = Conversationschema.save();
+         console.log("save", savedata);
+      }
+      res.status(200).json({
+         success: true,
+         responseMessage: "Successfully add your Friends",
+         result:savedata
+      });
+   } catch (err) {
+      res.status(500).json({ success: false, message: "conversation not found" });
+      console.log("err", err);
+   }
+};
+
 
 //get Conversation
 const getConversation = async (req, res) => {
@@ -35,8 +41,8 @@ const getConversation = async (req, res) => {
       });
       res.status(200).json(conversationschema);
    } catch (err) {
-      res.status(500).json({success:false,message:"conversation not found"});
-      
+      res.status(500).json({ success: false, message: "conversation not found" });
+
    }
 
 
@@ -45,12 +51,12 @@ const getConversation = async (req, res) => {
 const getFind = async (req, res) => {
    try {
       const conversation = await Conversation.findOne({
-        members: { $all: [req.params.firstUserId, req.params.secondUserId] },
+         members: { $all: [req.params.firstUserId, req.params.secondUserId] },
       });
       res.status(200).json(conversation)
-    } catch (err) {
-      res.status(500).json({success:false,message:"get conversation member fail"});
-    }
+   } catch (err) {
+      res.status(500).json({ success: false, message: "get conversation member fail" });
+   }
 }
 
 module.exports = {

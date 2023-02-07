@@ -370,30 +370,6 @@ const addOrUpdateNftCollection = async () => {
     }
 }
 
-//  addOrUpdateNftCollection()
-
-//  const addOrUpdateNftCollection=async (req,res)=>{
-//     try{
-//         const user= await profileModel.findOne({_id: req.userId})
-//         const {tokenAddress,tokenId}=req.body
-//         if(!user){
-//             res.status(404).json({success:false,message:"Profile not found"})
-//         }else{
-//             const nft= await nftCollectionModel.find({$and:[{userId:req.userId},{tokenAddress:tokenAddress},{tokenId:tokenId}]}).populate("userId")
-//             if(nft.length>0){
-
-//                     res.status(200).json({success:false,message:"This nft already added"});
-//             }else{
-//                 await new nftCollectionModel({userId:req.userId,...req.body}).save();
-//                 res.status(200).json({success:true,message:"Nft Added successfully"})
-//             }
-//         }
-
-//     }catch(err){
-//             res.status(501).json({success:false,message:err})
-//     }
-
-//  }
 
 const getAllNftCollection = async (req, res) => {
     try {
@@ -508,7 +484,7 @@ const getNftByNftCollectionId = async (req, res) => {
     try {
         const nfts = await nftCollectionModel.findOne({ _id: req.query.id });
         if (nfts) {
-             const data = await nftCollectionModel.findByIdAndUpdate({ _id: req.query.id }, { $inc: { viewsCount: 1 } }, { new: true }).populate("userId")
+             const data = await nftCollectionModel.findByIdAndUpdate({ _id: req.query.id }, { $inc: { viewsCount: 1 } }, { new: true }).populate("userId", "-password")
             //const data = await nftCollectionModel.findByIdAndUpdate({ _id: req.query.id }, { $inc: { viewsCount: 1 } }, { new: true })
             res.status(200).json({ success: true, message: "Your Nfts fetched successfully", responseResult: data })
 
@@ -610,253 +586,12 @@ const toggleLikeNft = async (req, res) => {
 }
 
 
-const mostLikeNft = async (req, res) => {
-    // try {
-    //     nftCollectionModel.find()
-    //       .sort({ likes: -1 })
-    //       .limit(10)
-    //       .then((nfts) => {
-    //         console.log(nfts);
-    //         res.status(200).json({
-    //           message: "Fetch seccessful",
-    //           nfts: nfts,
-    //         });
-    //       })
-    //       .catch(() => {
-    //         res.status(500).json({
-    //           error: error,
-    //         });
-    //       });
-    //   } catch (error) {
-    //     res.status(500).json({
-    //       error: error,
-    //     });
-    //   }
 
 
-    // 2nd Method using aggregate
-    const limit = parseInt(req.query.limit) || 10
-    try {
-        nftCollectionModel.aggregate([
-            { $match: { status: "SHOW" } },
-            {
-                '$set': {
-                  'likes': {
-                    '$size': '$likes'
-                  }, 
 
-                }
-              },
-            {
-                "$sort": { "likes": -1 }
-            },
-            {
-                "$limit": limit
-            }
-        ]).then((nfts) => {
-            // console.log(nfts);
-            res.status(200).json({
-                message: "Fetch seccessful",
-                nfts: nfts,
-            });
-        })
-            .catch((error) => {
-                res.status(500).json({
-                    error: error,
-                });
-            });
-    } catch (error) {
-        res.status(500).json({
-            error: error,
-        });
-    }
-}
 
-const mostViewNft = async (req, res) => {
-    // try {
-    //     nftCollectionModel.find()
-    //       .sort({ views: -1 })
-    //       .limit(10)
-    //       .then((nfts) => {
-    //         console.log(nfts);
-    //         res.status(200).json({
-    //           message: "Fetch seccessful",
-    //           nfts: nfts,
-    //         });
-    //       })
-    //       .catch(() => {
-    //         res.status(500).json({
-    //           error: error,
-    //         });
-    //       });
-    //   } catch (error) {
-    //     res.status(500).json({
-    //       error: error,
-    //     });
-    //   }
 
-    // 2nd Method using aggregate
-    const limit = parseInt(req.query.limit) || 10
-    try {
-        nftCollectionModel.aggregate([
-            { $match: { status: "SHOW" } },
-            {
-                "$sort": { "viewsCount": -1 }
-            },
-            {
-                "$limit": limit
-            }
-        ]).then((nfts) => {
-            // console.log(nfts);
-            res.status(200).json({
-                message: "Fetch seccessful",
-                nfts: nfts,
-            });
-        })
-            .catch((error) => {
-                res.status(500).json({
-                    error: error,
-                });
-            });
-    } catch (error) {
-        res.status(500).json({
-            error: error,
-        });
-    }
-}
 
-const recentlyListedNft = async (req, res) => {
-    const limit = parseInt(req.query.limit) || 9
-    try {
-        nftCollectionModel.aggregate([
-            { $match: { status: "SHOW" } },
-            {
-                "$sort": { "createdAt": -1 }
-            },
-            {
-                "$limit": limit
-            }
-        ]).then((nfts) => {
-            // console.log(nfts);
-            res.status(200).json({
-                message: "Fetch seccessful",
-                nfts: nfts,
-            });
-        })
-            .catch((error) => {
-                res.status(500).json({
-                    error: error,
-                });
-            });
-    } catch (error) {
-        res.status(500).json({
-            error: error,
-        });
-    }
-}
-
-const hideToggleNft = async (req, res) => {
-    try {
-        const user = await profileModel.findOne({ _id: req.userId })
-        if (!user) {
-            res.status(404).json({ success: false, message: "Profile not found" })
-        } else {
-            const nft = await nftCollectionModel.findOne({ _id: req.query.id }).populate("userId")
-            if (nft) {
-                const unhide = await nftCollectionModel.findOne({ _id: nft._id, $ne: "SHOW" }).populate("userId");
-                if (unhide.status !== "SHOW") {
-                    const unhideData = await nftCollectionModel.updateOne({ _id: req.query.id }, { $set: { status: "SHOW" } }, { new: true })
-                    console.log(unhideData);
-                    res.status(200).json({ success: true, message: "nft unhide successfully" })
-
-                } else {
-                    const hideData = await nftCollectionModel.updateOne({ _id: req.query.id }, { $set: { status: "HIDE" } }, { new: true })
-                    console.log(hideData);
-                    res.status(200).json({ success: true, message: "nft hide successfully" })
-
-                }
-            } else {
-                res.status(501).json({ success: true, message: "Nft no found" })
-            }
-
-        }
-
-    } catch (err) {
-        res.status(501).json({ success: false, message: err })
-    }
-}
-
-const getAllHideNft = async (req, res) => {
-    try {
-        const user = await profileModel.findOne({ _id: req.userId })
-        if (!user) {
-            res.status(404).json({ success: false, message: "Profile not found" })
-        } else {
-            const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
-            const nfts = await nftCollectionModel.find({ userId: req.userId, status: "HIDE" }).sort({ createdAt: -1 }).skip((page - 1) * limit).populate("userId", "-password -_id").limit(limit);
-            // console.log(nfts);
-            if (nfts.length > 0) {
-                res.status(200).json({ success: true, message: "Your Nfts fetched successfully", responseResult: nfts })
-            } else {
-                res.status(404).json({ success: true, message: "nft not found" })
-            }
-        }
-
-    } catch (err) {
-        res.status(501).json({ success: false, message: err })
-    }
-}
-
-const pinnedToggleNft = async (req, res) => {
-    try {
-        const user = await profileModel.findOne({ _id: req.userId })
-        if (!user) {
-            res.status(404).json({ success: false, message: "Profile not found" })
-        } else {
-            const nft = await nftCollectionModel.findOne({ _id: req.query.id, $ne: "PINNED" }).populate("userId")
-            if (nft) {
-                const unpinned = await nftCollectionModel.findOne({ _id: nft._id }).populate("userId");
-                if (unpinned.pinnedStatus !== "PINNED") {
-                    const pinnedData = await nftCollectionModel.updateOne({ _id: req.query.id }, { $set: { pinnedStatus: "PINNED" } }, { new: true })
-                    res.status(200).json({ success: true, message: "nft pinned successfully" })
-
-                } else {
-                    const unpinnedData = await nftCollectionModel.updateOne({ _id: req.query.id }, { $set: { pinnedStatus: "UNPINNED" } }, { new: true })
-                    res.status(200).json({ success: true, message: "nft unpinned successfully" })
-
-                }
-            } else {
-                res.status(501).json({ success: true, message: "Nft no found" })
-            }
-
-        }
-
-    } catch (err) {
-        res.status(501).json({ success: false, message: err })
-    }
-}
-
-const getAllPinnedNftByUserName = async (req, res) => {
-    try {
-        const user = await profileModel.findOne({ userName: req.query.userName })
-        if (!user) {
-            res.status(404).json({ success: false, message: "Profile not found" })
-        } else {
-            const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
-            const nfts = await nftCollectionModel.find({ userId: user._id, status: "SHOW", pinnedStatus: "PINNED" }).sort({ createdAt: -1 }).skip((page - 1) * limit).populate("userId", "-password").limit(limit);
-            if (nfts.length > 0) {
-                res.status(200).json({ success: true, message: "Your Nfts fetched successfully", responseResult: nfts })
-            } else {
-                res.status(404).json({ success: true, message: "nft not found" })
-            }
-        }
-
-    } catch (err) {
-        res.status(501).json({ success: false, message: err })
-    }
-}
 
 module.exports = {
     addOrUpdateNftCollection,
@@ -867,13 +602,6 @@ module.exports = {
     getNftByNftCollectionId,
     getNftCollectionByChainNameAndUserName,
     toggleLikeNft,
-    mostLikeNft,
-    mostViewNft,
-    recentlyListedNft,
-    hideToggleNft,
-    getAllHideNft,
-    pinnedToggleNft,
-    getAllPinnedNftByUserName,
     getAllNftByUserName,
    addOrUpdateNftCollectionUser
 

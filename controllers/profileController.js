@@ -38,21 +38,21 @@ const signup = async (req, res, next) => {
 
             });
             if (password !== conformPassword) {
-                return res.json({ responseCode: responseCodes.PASSWORD_CONFIRMPASSWORD, responseMessage: responseMessage.PASSWORD_NOT_MATCH })
+                return res.send({ responseCode: responseCodes.PASSWORD_CONFIRMPASSWORD, responseMessage: responseMessage.PASSWORD_NOT_MATCH })
             }
             await userSave.save();
             if (userSave) {
                 const token = jwt.sign({ userId: userSave._id }, process.env.JWT_SECRET_KEY, { expiresIn: "5d" })
-                return res.json({ responseCode: responseCodes.SUCCESS, responseMessage: responseMessage.SIGN_UP, token: token, responseResult: userSave })
+                return res.send({ responseCode: responseCodes.SUCCESS, responseMessage: responseMessage.SIGN_UP, token: token, responseResult: userSave })
 
             } else {
-                return res.json({ responseCode: responseCodes.SOMETHING_WRONG, responseMessage: responseMessage.SOMETHING_WRONG, responseResult: [] })
+                return res.send({ responseCode: responseCodes.SOMETHING_WRONG, responseMessage: responseMessage.SOMETHING_WRONG, responseResult: [] })
             }
         }
 
     }
     catch (error) {
-        return res.json({ responseCode: responseCodes.SOMETHING_WRONG, responseMessage: responseMessage.SOMETHING_WRONG, responseResult: error })
+        return res.send({ responseCode: responseCodes.SOMETHING_WRONG, responseMessage: responseMessage.SOMETHING_WRONG, responseResult: error })
     }
 }
 
@@ -68,6 +68,7 @@ const login = async (req, res) => {
         const validatedBody = await Joi.validate(req.body, validationSchema);
         const {userName, email, password } = validatedBody
         const user = await ProfileModel.findOne({$or:[{userName:userName},{email:email}]});
+        console.log("user", user)
 
 
         if (user) {
@@ -97,65 +98,11 @@ const login = async (req, res) => {
 
 
 
-const forgotPassword = async (req, res, next) => {
-    const validationSchema = {
-        email: Joi.string().required()
-    }
-    try {
-        const validatedBody = await Joi.validate(req.body, validationSchema);
-        const { email } = validatedBody
-        const user = await ProfileModel.findOne({ email: email })
-        if (!user) {
-            return res.send({ responseCode: responseCodes.USER_NOT_FOUND, responseMessage: responseMessage.USER_NOT_FOUND })
-        }
-        else {
-            const secret = user._id + process.env.JWT_SECRET_KEY;
-            const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '5m' })
-            var link = `${process.env.LIVE_URL}/reset?id=${user._id}&token=${token}`
-            var html = `Hi,<br /><br /> You recently requested to reset your password. <br /><br /><a href=${link}>Click Here</a> to Reset Your Password. <br /><br />Please ignore if not requested by you.<br /><br /> Regards,<br /><br />Wolf Pup Registry Team`
-            const subject = "Wolf Pup Registry - Password Reset Link"
-            await common.sendMailing(email, subject, html);
-        }
-        res.send({ responseCode: responseCodes.SUCCESS, responseMessage: responseMessage.FORGOT_PASSWORD, responseResult: link })
-    }
-    catch (error) {
-        return res.send({ responseCode: responseCodes.SOMETHING_WRONG, responseMessage: responseMessage.SOMETHING_WRONG, responseResult: error })
-    }
-}
 
 
-const resetPassword = async (req, res, next) => {
-    const validationSchema = {
-        newPassword: Joi.string().required(),
-        confirmPassword: Joi.string().required(),
-    }
-    try {
-        const validatedBody = await Joi.validate(req.body, validationSchema);
-        const { newPassword, confirmPassword } = validatedBody;
-        const { id, token } = req.query;
-        const user = await ProfileModel.findById(id);
-        const new_secret = user._id + process.env.JWT_SECRET_KEY;
-        if (!user) {
-            return res.send({ responseCode: responseCodes.USER_NOT_FOUND, responseMessage: responseMessage.USER_NOT_FOUND })
-        }
-        else {
 
-            jwt.verify(token, new_secret);
-            if (newPassword === confirmPassword) {
-                const salt = await bcryptjs.genSalt(10)
-                const hashnewPassword = await bcryptjs.hashSync(newPassword, salt)
-                const userUpdate = await ProfileModel.findByIdAndUpdate({ _id: user._id }, { $set: { password: hashnewPassword } }, { new: true })
-                return res.send({ responseCode: responseCodes.SUCCESS, responseMessage: responseMessage.RESET_PASSWORD, responseResult: [] })
-            }
-            else {
-                return res.send({ responseCode: responseCodes.PASSWORD_CONFIRMPASSWORD, responseMessage: responseMessage.PASSWORD_NOT_MATCH })
-            }
-        }
-    }
-    catch (error) {
-        return res.send({ responseCode: responseCodes.SOMETHING_WRONG, responseMessage: responseMessage.SOMETHING_WRONG, responseResult: error.message })
-    }
-}
+
+
 
 
 
@@ -270,32 +217,13 @@ const editProfile = async (req, res) => {
     }
 }
 
-const updateProfilePic = async (req, res) => {
-    const validationSchema = {
-        profilePic: Joi.string().allow("").optional(),
-    };
-    try {
-        const validatedBody = await Joi.validate(req.body, validationSchema)
-        const user = await ProfileModel.findOne({ _id: req.userId })
-        if (!user) {
-            res.status(404).json({ success: false, message: "Profile not found" })
-        } else {
-            const updateData = await ProfileModel.findByIdAndUpdate({ _id: user._id }, validatedBody, { new: true }).select("profilePic -_id")
-            res.status(200).json({ success: true, message: "updated profile pic successfully", responseResult: updateData, })
-        }
 
-    } catch (err) {
-        res.status(501).json({ success: false, message: err })
-    }
-}
 
 module.exports = {
     login,
     signup,
-    forgotPassword,
-    resetPassword,
     viewProfile,
     getProfileByUserName,
     editProfile,
-    updateProfilePic
+
 }

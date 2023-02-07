@@ -45,6 +45,8 @@ const profileSchema = mongoose.Schema({
     type: Array,
     default: [],
   },
+  // followers: [],
+  // following: [],
   // ...end
   bio: {
     type: String,
