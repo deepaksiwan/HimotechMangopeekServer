@@ -10,22 +10,33 @@ const AddConversation = async (req, res) => {
          members: [req.body.senderId, req.body.receiverId],
       });
      
-      if (allreadymember) {
+      if (allreadymember && req.body.senderId !== "" && req.body.receiverId !=="") {
          res.status(404).json({ success: false, responseMessage: "Allready add your Friends", });
       }
-      else {
+      else  {
          const Conversationschema = new Conversation({
             members: [req.body.senderId, req.body.receiverId],
          });
 
+        if(req.body.senderId !== "" && req.body.receiverId !== ""){
          const savedata = Conversationschema.save();
          console.log("save", savedata);
+         res.status(200).json({
+            success: true,
+            responseMessage: "Successfully add your Friends",
+            result:savedata
+         });
+        }else{
+         res.status(301).json({
+            success: false,
+            responseMessage: "something went wrong",
+            
+         });
+
+        }
+         
       }
-      res.status(200).json({
-         success: true,
-         responseMessage: "Successfully add your Friends",
-         result:savedata
-      });
+      
    } catch (err) {
       res.status(500).json({ success: false, message: "conversation not found" });
       console.log("err", err);
