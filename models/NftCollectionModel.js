@@ -48,11 +48,22 @@ const NftCollectionSchema = mongoose.Schema({
      ref: "Profile",
     },
   ],
-  // comments: [
-  // {
-  // type:mongoose.Schema.Types.ObjectId,ref:"Comments"
-  // }
-  // ],
+  comment:[{
+    text:{
+      type:String,
+       required:"Please comment",
+       required: true
+    },
+    time:{
+      type: String,
+      default: new Date()
+    },
+   userId:{
+     type:mongoose.Schema.Types.ObjectId,
+     ref:"Profile"
+   } 
+ }],
+
 
   lazyName:{
     type: String,

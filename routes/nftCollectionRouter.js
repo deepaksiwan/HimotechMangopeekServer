@@ -8,7 +8,10 @@ const {
     getNftCollectionByChainNameAndUserName,
     updateNftNameOrDescription,
     getNftByNftCollectionId,
-    
+    toggleLikeNft,
+    AddNftComments,
+    getNftComments,
+    DeleteNftComments,
     getAllNftByUserName
 } =require('../controllers/nftCollectionController');
 const {verifyToken}=require('../middleware/auth');
@@ -168,6 +171,40 @@ router.get("/getNftCollectionByChainNameAndUserName",getNftCollectionByChainName
  *       501:
  *         description: Something went wrong!
  */
+
+
+
+
+router.put("/toggleLike",verifyToken,toggleLikeNft)
+
+/**
+ * @swagger
+ * /api/v1/nftCollection/toggleLike:
+ *   put:
+ *     tags:
+ *       - NftCollections
+ *     description: like or dislike nft collection by nftCollectionId
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: nftCollectionId required.
+ *         in: formData
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: nft like/dislike successfully.
+ *       500:
+ *         description: Internal Server Error
+ *       501:
+ *         description: Something went wrong!
+ */
+
+
+router.put("/AddNftComments", AddNftComments)
+router.get("/getNftComments", getNftComments)
+router.delete("/DeleteNftComments", DeleteNftComments)
+
 
 
 

@@ -8,7 +8,7 @@ const WOLFPUPS_NFT_ABI = require("../utils/WOLFPUPS_NFT_ABI.json")
 const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth")
 const bscprovider = new ethers.providers.JsonRpcProvider("https://data-seed-prebsc-1-s3.binance.org:8545")
 const getUserNFTByTokenURI = require("../utils/getUserNFTByTokenURI");
- 
+const  Message =  require(".././models/chatModels/Message");
 
 const getContract = (contractAddress, contractAbi, signerOrProvider) => {
     const contract = new ethers.Contract(contractAddress, contractAbi, signerOrProvider);
@@ -484,7 +484,7 @@ const getNftByNftCollectionId = async (req, res) => {
     try {
         const nfts = await nftCollectionModel.findOne({ _id: req.query.id });
         if (nfts) {
-             const data = await nftCollectionModel.findByIdAndUpdate({ _id: req.query.id }, { $inc: { viewsCount: 1 } }, { new: true }).populate("userId", "-password")
+             const data = await nftCollectionModel.findByIdAndUpdate({ _id: req.query.id }, { $inc: { viewsCount: 1 } }, { new: true }).populate("userId", "-password").populate("comment.userId")
             //const data = await nftCollectionModel.findByIdAndUpdate({ _id: req.query.id }, { $inc: { viewsCount: 1 } }, { new: true })
             res.status(200).json({ success: true, message: "Your Nfts fetched successfully", responseResult: data })
 
@@ -566,6 +566,7 @@ const toggleLikeNft = async (req, res) => {
             if (nft) {
                 
                 const unlike = await nftCollectionModel.findOne({ $and: [{ _id: req.query.id }, { likes: req.userId }] }).populate("userId");
+                //console.log("unlike", unlike)
                 if (unlike) {
                     const unlikeData = await nftCollectionModel.findByIdAndUpdate({ _id: req.query.id }, { $pull: { likes: req.userId } }, { new: true })
                     res.status(200).json({ success: true, message: "nft unlike successfully", responseResult: unlikeData })
@@ -585,11 +586,48 @@ const toggleLikeNft = async (req, res) => {
     }
 }
 
+const AddNftComments = async (req, res) => {
+    try {
+        const addnewComments = await nftCollectionModel.findByIdAndUpdate({_id:req.query.nftId},{
+            $push:{comment:req.body.comment}   
+        })
+        res.status(200).json(addnewComments)
+    } catch (error) {
+        return res.status(500).json({
+            status: 0,
+            message: error.toString()
+        })
+    }
+
+}
+
+const getNftComments = async (req, res) => {
+    try {
+        const getComments = await nftCollectionModel.findById({_id:req.query.getNftId}).populate("comment.userId")
+        res.status(200).json({success: true, result: getComments})
+    } catch (error) {
+        return res.status(500).json({
+            status: 0,
+            message: error.toString()
+        })
+    }
+
+}
+ 
 
 
+const DeleteNftComments = async (req, res) => {
+    try {
+        const deleteComments = await Message.findByIdAndDelete({_id:req.query.NftId})
+        res.status(200).json({success: true, result: deleteComments, message: "successfully Delete"})
+    } catch (error) {
+        return res.status(500).json({
+            status: 0,
+            message: error.toString()
+        })
+    }
 
-
-
+}
 
 
 
@@ -603,6 +641,9 @@ module.exports = {
     getNftCollectionByChainNameAndUserName,
     toggleLikeNft,
     getAllNftByUserName,
-   addOrUpdateNftCollectionUser
+   addOrUpdateNftCollectionUser,
+   AddNftComments,
+   getNftComments,
+   DeleteNftComments
 
 }

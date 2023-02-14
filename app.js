@@ -139,6 +139,7 @@ const addNewUser = (username, socketId) => {
 		onlineUsers.push({ username, socketId });
 };
 
+
 const removeOnlineUser = (socketId) => {
 	onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
 };

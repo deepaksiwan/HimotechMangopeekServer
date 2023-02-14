@@ -7,7 +7,8 @@ const CommentsSchema = new mongoose.Schema(
    comment:{
       text:{
         type:String,
-         required:"Please comment"
+         required:"Please comment",
+         required: true
       },
      userId:{
        type:mongoose.Schema.Types.ObjectId,

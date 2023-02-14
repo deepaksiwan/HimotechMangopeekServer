@@ -38,8 +38,6 @@ const addWallet = async (req, res) => {
 const syncOffAllWallet = async (req, res) => {
     try {
 
-
-
         await userWalletModel.updateMany({ syncing: true }, { $set: { syncing: false } })
 
         // res.status(200).json({success:true,message:"wallets synced off successfully"})

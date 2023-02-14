@@ -104,8 +104,6 @@ const login = async (req, res) => {
 
 
 
-
-
 const viewProfile = async (req, res) => {
     try {
         const user = await ProfileModel.findOne({ _id: req.userId }).select("-password -__v")
@@ -136,10 +134,10 @@ const getProfileByUserName = async (req, res) => {
 
 const editProfile = async (req, res) => {
     const validationSchema = {
-        firstName: Joi.string().allow("").optional(),
-        lastName: Joi.string().allow("").optional(),
-        email: Joi.string().allow("").optional(),
-        userName: Joi.string().allow("").optional(),
+        firstName: Joi.string().allow().required(),
+        lastName: Joi.string().allow().required(),
+        email: Joi.string().email().required(),
+        userName: Joi.string().allow().required(),
         bio: Joi.string().allow("").optional(),
         // twitterName: Joi.string().allow("").optional(),
         // facebookName: Joi.string().allow("").optional(),
@@ -159,15 +157,15 @@ const editProfile = async (req, res) => {
                 let updateData;
                 if (email && firstName && lastName && userName && bio) {
                     let checkEmail = await ProfileModel.findOne({ $and: [{ email: email, _id: { $ne: user._id } }] });
-                     //console.log("herreeeeeeeeeeeeeeeeeeherreeeeeeeeeeeeeeeeeeherreeeeeeeeeeeeeeeeeeherreeeeeeeeeeeeeeeeee")
+                
                     let checkUserName = await ProfileModel.findOne({ $and: [{ userName: userName, _id: { $ne: user._id } }] });
                     // console.log(checkUserName)
                     if (checkEmail) {
     
-                        res.status(201).json({ message: "user with email already exists" });
+                        res.status(201).json({ success: false, message: "user with email already exists" });
                     }
                     else if (checkUserName) {
-                        res.status(201).json({ success: false, message: "user with username already exists" });
+                        res.status(202).json({ success: false, message: "user with username already exists" });
                     }
                     else {
 
@@ -214,6 +212,7 @@ const editProfile = async (req, res) => {
 
     } catch (err) {
         res.status(501).json({ success: false, message: err })
+        console.log(err)
     }
 }
 

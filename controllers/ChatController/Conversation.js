@@ -3,13 +3,14 @@ const Conversation = require("../../models/chatModels/Conversation");
 
 
 
-
+//{ $and: [ { <expression1> }, { <expression2> } , ... , { <expressionN> } ] }
+//members: [req.body.senderId, req.body.receiverId]
 const AddConversation = async (req, res) => {
    try {
+
       const allreadymember = await Conversation.findOne({
-         members: [req.body.senderId, req.body.receiverId],
+         $and:[{members: [req.body.senderId, req.body.receiverId]}]
       });
-     
       if (allreadymember && req.body.senderId !== "" && req.body.receiverId !=="") {
          res.status(404).json({ success: false, responseMessage: "Allready add your Friends", });
       }
@@ -18,19 +19,21 @@ const AddConversation = async (req, res) => {
             members: [req.body.senderId, req.body.receiverId],
          });
 
-        if(req.body.senderId !== "" && req.body.receiverId !== ""){
+        if(req.body.senderId == "" || req.body.receiverId == ""){
+         res.status(301).json({
+            success: false,
+            responseMessage: "something went wrong",
+            
+         });
+
+        }else {
+         
          const savedata = Conversationschema.save();
          console.log("save", savedata);
          res.status(200).json({
             success: true,
             responseMessage: "Successfully add your Friends",
             result:savedata
-         });
-        }else{
-         res.status(301).json({
-            success: false,
-            responseMessage: "something went wrong",
-            
          });
 
         }

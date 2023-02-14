@@ -4,7 +4,9 @@ const ConversationSchema = new mongoose.Schema(
   {
     members: {
       type: Array,
+      
     },
+   
     
       // members:[{
       //   senderId:{
