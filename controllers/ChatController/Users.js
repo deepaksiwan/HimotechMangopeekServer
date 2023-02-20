@@ -19,23 +19,47 @@ const getUser = async(req, res) => {
 }
 
 //get friends
+// const getFriends = async(req, res) => {
+//    try {
+//       const user = await profileModel.findById(req.params.userId);
+//       console.log("user", user)
+//       const friends = await Promise.all(
+//         user.followers.map((friendId) => {
+//           return profileModel.findById(friendId);
+//         })
+//       );
+//       let friendList = [];
+//       friends.map((friend) => {
+//         const { _id, userName, profilePic } = friend;
+//         friendList.push({ _id, userName, profilePic });
+//       });
+//       res.status(200).json(friendList)
+//     } catch (err) {
+//       res.status(500).json(err);
+//     }
+
+// }
+
+
+
 const getFriends = async(req, res) => {
-   try {
-      const user = await profileModel.findById(req.params.userId);
-      const friends = await Promise.all(
-        user.followers.map((friendId) => {
-          return profileModel.findById(friendId);
-        })
-      );
-      let friendList = [];
-      friends.map((friend) => {
-        const { _id, userName, profilePic } = friend;
-        friendList.push({ _id, userName, profilePic });
-      });
-      res.status(200).json(friendList)
-    } catch (err) {
-      res.status(500).json(err);
-    }
+  try {
+     const user = await profileModel.findById(req.params.userId);
+    // console.log("user", user)
+     const friends = await Promise.all(
+       user.followers.map((friendId) => {
+         return profileModel.findById(friendId);
+       })
+     );
+     let friendList = [];
+     friends.map((friend) => {
+       const { _id, userName, profilePic } = friend;
+       friendList.push({ _id, userName, profilePic });
+     });
+     res.status(200).json(friendList)
+   } catch (err) {
+     res.status(500).json(err);
+   }
 
 }
 

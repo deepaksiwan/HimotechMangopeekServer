@@ -601,6 +601,8 @@ const AddNftComments = async (req, res) => {
 
 }
 
+
+
 const getNftComments = async (req, res) => {
     try {
         const getComments = await nftCollectionModel.findById({_id:req.query.getNftId}).populate("comment.userId")

@@ -200,9 +200,11 @@ router.put("/toggleLike",verifyToken,toggleLikeNft)
  *         description: Something went wrong!
  */
 
-
+//api for comment......
 router.put("/AddNftComments", AddNftComments)
 router.get("/getNftComments", getNftComments)
+//.......  end*/
+
 router.delete("/DeleteNftComments", DeleteNftComments)
 
 

@@ -1,22 +1,37 @@
 const mongoose = require("mongoose");
+// {
+//   members: [
+//     {
+//       senderId: {
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: "Profile",
+//       },
+//       receiverId: {
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: "Profile",
+//       },
+//     },
+//   ],
+  
+// },
+// { timestamps: true }
+
 
 const ConversationSchema = new mongoose.Schema(
   {
     members: {
-      type: Array,
-      
+      type:Array,
     },
-   
-    
-      // members:[{
-      //   senderId:{
-      //     type: String
-      //   },
-      //   receiverId:{
-      //     type: String
-      //   }
-      // }]
-        
+  //   members:[{
+  //     senderId: {
+  //       type: mongoose.Schema.Types.ObjectId,
+  //       ref: "Profile",
+  //     },
+  //     receiverId: {
+  //       type: mongoose.Schema.Types.ObjectId,
+  //       ref: "Profile",
+  //     },
+  // }]
   },
   { timestamps: true }
 );
