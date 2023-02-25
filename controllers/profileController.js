@@ -10,31 +10,34 @@ require("dotenv").config();
 
 const signup = async (req, res, next) => {
     const validationSchema = {
-        firstName: Joi.string().required(),
         lastName: Joi.string().required(),
-        email: Joi.string().required(),
+        firstName: Joi.string().required(),
         userName: Joi.string().required(),
+        email: Joi.string().required(),
         password: Joi.string().required(),
         conformPassword: Joi.string().required(),
 
     }
+    console.log("validationSchema", validationSchema)
     try {
         const validatedBody = await Joi.validate(req.body, validationSchema);
-        const { email, userName, password, firstName, lastName, conformPassword } = validatedBody
-        // console.log(validatedBody);
-        const user = await ProfileModel.findOne({ $or: [{ email: email }, { userName: userName }] })
+        const {firstName, userName,email,lastName, password, conformPassword } = validatedBody
+         console.log(validatedBody);
+        const user = await ProfileModel.findOne({ $or: [{ userName: userName },{ email: email }] })
+        
+        console.log("user", user)
         if (user) {
             return res.json({ responseCode: responseCodes.ALREADY_EXIST, responseMessage: responseMessage.USER_ALREADY })
         } else {
             const salt = await bcryptjs.genSalt(10)
             const userSave = await ProfileModel({
-                firstName: firstName,
                 lastName: lastName,
+                firstName: firstName,
                 userName: userName,
                 email: email,
                 password: bcryptjs.hashSync(password, salt),
                 conformPassword: bcryptjs.hashSync(password, salt),
-                walletId: new mongoose.Types.ObjectId()
+                //walletId: new mongoose.Types.ObjectId()
 
             });
             if (password !== conformPassword) {
@@ -45,13 +48,15 @@ const signup = async (req, res, next) => {
                 const token = jwt.sign({ userId: userSave._id }, process.env.JWT_SECRET_KEY, { expiresIn: "5d" })
                 return res.send({ responseCode: responseCodes.SUCCESS, responseMessage: responseMessage.SIGN_UP, token: token, responseResult: userSave })
 
-            } else {
+            } else  if(error){
+                console.log("error", error)
                 return res.send({ responseCode: responseCodes.SOMETHING_WRONG, responseMessage: responseMessage.SOMETHING_WRONG, responseResult: [] })
             }
         }
 
     }
     catch (error) {
+       
         return res.send({ responseCode: responseCodes.SOMETHING_WRONG, responseMessage: responseMessage.SOMETHING_WRONG, responseResult: error })
     }
 }
@@ -171,7 +176,7 @@ const editProfile = async (req, res) => {
 
                         updateData = await ProfileModel.findByIdAndUpdate({ _id: user._id }, validatedBody, { new: true }).select("-password");
 
-                        res.status(200).json({ success: true, message: "updated successfully", data: updateData })
+                        res.status(200).json({ success: true, responseCodes: responseCodes.SUCCESS, message: "updated successfully", data: updateData })
 
                     }
                 } else {
@@ -201,7 +206,7 @@ const editProfile = async (req, res) => {
                     if (updateData) {
                         res.status(200).json({ success: true, message: "updated successfully", data: updateData })
                     } else {
-                        res.status(501).json({ success: false, message: "something went wrong" })
+                        res.status(501).json({ success: false, responseCode: responseCodes.SOMETHING_WRONG, message: "something went wrong" })
                     }
                 }
 

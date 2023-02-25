@@ -4,12 +4,12 @@ const profileSchema = mongoose.Schema({
   firstName:{
     type:String,
     required: [true, "Please Enter  firstName"],
-    unique:true
+    unique:false
   },
   lastName:{
     type:String,
     required: [true, "Please Enter  lastName"],
-    unique:true
+     unique:false
   },
   email:{
     type:String,

@@ -17,12 +17,27 @@ const AddMessage = async (req, res) => {
 }
 
 //get Message
+// const getMessage = async(req, res) => {
+//    try {
+//       const messages = await Message.find({
+//          conversationId: req.params.conversationId,
+//       });
+//       res.status(200).json(messages);
+//    } catch (err) {
+//       res.status(500).json({success:false,message:"get message fail"});
+//       console.log(err);
+//    }
+
+// }
+
+
+
 const getMessage = async(req, res) => {
    try {
       const messages = await Message.find({
-         conversationId: req.params.conversationId,
+         conversationId: req.query.conversationId,
       });
-      res.status(200).json(messages);
+      res.status(200).json({success: true, responseMessage: messages});
    } catch (err) {
       res.status(500).json({success:false,message:"get message fail"});
       console.log(err);

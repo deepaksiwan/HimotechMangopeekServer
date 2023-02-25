@@ -126,7 +126,7 @@ router.post("/AddMessage", AddMessage)
  *         description:get message fail
  */
 
-router.get("/getMessage/:conversationId", getMessage)
+router.get("/getMessage", getMessage)
 
 
 

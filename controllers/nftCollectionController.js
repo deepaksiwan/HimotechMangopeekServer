@@ -135,7 +135,7 @@ const addOrUpdateNftCollectionUser = async (_userId) => {
                         }
                         if (_wallet.networkName === "Ethereum") {
                             const contract = getContract(WOLFPUPS_NFT_address, WOLFPUPS_NFT_ABI, provider);
-
+                            
                             const balanceOf = await contract.balanceOf(_wallet.address);
                             let ac= 0;
                             for (let i = 0; i < parseInt(balanceOf); i++) {
@@ -168,7 +168,6 @@ const addOrUpdateNftCollectionUser = async (_userId) => {
                                         metadata:metadata.data
                                     }
                                 // console.log(i);
-                                  
                                     await new nftCollectionModel(obj).save();
 
                                 }
@@ -179,9 +178,6 @@ const addOrUpdateNftCollectionUser = async (_userId) => {
                                 }
                             }
                         }
-
-                        
-
                 }
 
                 }))
@@ -600,7 +596,6 @@ const AddNftComments = async (req, res) => {
     }
 
 }
-
 
 
 const getNftComments = async (req, res) => {
