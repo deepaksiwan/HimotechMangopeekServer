@@ -3,93 +3,109 @@ const { timestamp } = require("joi/lib/types/date");
 const mongoose = require("mongoose");
 
 const NftCollectionSchema = mongoose.Schema({
-  userId:{type:mongoose.Schema.Types.ObjectId,ref:"Profile"},
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "Profile" },
   tokenAddress: {
     type: String,
     required: [true, "Please Enter The address of the contract of the NFT"],
-    },
+  },
   tokenId: {
-      type: String,
-      required: [true, "Please Enter The token id of the NFT"],
-    },
-  tokenOwner:{
+    type: String,
+    required: [true, "Please Enter The token id of the NFT"],
+  },
+  tokenOwner: {
     type: String,
     required: [true, "Please Enter The token Owner of the NFT"],
-  } ,
-  chainName:{
+  },
+  chainName: {
     type: String,
     required: [true, "Please Enter The chainName of the NFT"],
   },
-  exist : {
+  exist: {
     type: Boolean,
   },
-  metadata:{
-    dna:{type: String},
-    name:{type: String,trim: true,},
-    description:{type:String,trim: true,},
-    image:{type:String},
-    edition:{type:String},
-    date:{type:String},
-    attributes:[{
-      trait_type:{type:String},
-      value:{type:String}
+  metadata: {
+    dna: { type: String },
+    name: { type: String, trim: true, },
+    description: { type: String, trim: true, },
+    image: { type: String },
+    edition: { type: String },
+    date: { type: String },
+    attributes: [{
+      trait_type: { type: String },
+      value: { type: String }
     }]
 
   },
-  viewsCount: 
-    {
+  viewsCount:
+  {
     type: Number,
-    default:0
-   }
- ,
+    default: 0
+  }
+  ,
   likes: [
     {
-     type: mongoose.Schema.Types.ObjectId,
-     ref: "Profile",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile",
     },
   ],
-  comment:[{
-    text:{
-      type:String,
-       required:"Please comment",
-       required: true
+  comment: [{
+    text: {
+      type: String,
+      required: "Please comment",
+      required: true
     },
-    time:{
+    time: {
       type: String,
       default: new Date()
     },
-   userId:{
-     type:mongoose.Schema.Types.ObjectId,
-     ref:"Profile"
-   } 
- }],
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile"
+    },
+    commentreply: [{
+      text: {
+        type: String,
+        required: "Please reply comment",
+        default: ""
+      },
+      time: {
+        type: String,
+        default: new Date()
+      },
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Profile"
+      },
+    },
+    ]
+  }],
 
 
-  lazyName:{
+  lazyName: {
     type: String,
-    default:"",
+    default: "",
     trim: true,
   },
   lazyDescription: {
     type: String,
-    default:"",
+    default: "",
     trim: true,
   },
 
-  status:{
-    type:String,
-    enum:["SHOW","HIDE"],
-    default:"SHOW"
+  status: {
+    type: String,
+    enum: ["SHOW", "HIDE"],
+    default: "SHOW"
   },
-  pinnedStatus:{
-    type:String,
-    enum:["PINNED","UNPINNED"],
-    default:"UNPINNED"
+  pinnedStatus: {
+    type: String,
+    enum: ["PINNED", "UNPINNED"],
+    default: "UNPINNED"
   }
 
 
 },
-{ timestamps: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("NftCollection", NftCollectionSchema);

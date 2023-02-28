@@ -10,6 +10,7 @@ const {
     getNftByNftCollectionId,
     toggleLikeNft,
     AddNftComments,
+    ReplyNftComments,
     getNftComments,
     DeleteNftComments,
     getAllNftByUserName
@@ -202,6 +203,7 @@ router.put("/toggleLike",verifyToken,toggleLikeNft)
 
 //api for comment......
 router.put("/AddNftComments", AddNftComments)
+router.put("/ReplyNftComments", ReplyNftComments)
 router.get("/getNftComments", getNftComments)
 //.......  end*/
 
