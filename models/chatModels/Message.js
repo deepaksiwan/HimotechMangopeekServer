@@ -7,9 +7,11 @@ const MessageSchema = new mongoose.Schema(
     },
     sender: {
       type: String,
+    
     },
     text: {
       type: String,
+      default: new Date()
     },
   },
   { timestamps: true }

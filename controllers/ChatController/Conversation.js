@@ -129,7 +129,7 @@ const getConversation = async (req, res) => {
    try {
       const conversationschema = await Conversation.find({
          members: { $in: [req.params.userId] },
-      });
+      }).populate("members.messages.lastMessasgeShow");
       res.status(200).json(conversationschema);
    } catch (err) {
       res.status(500).json({ success: false, message: "conversation not found" });

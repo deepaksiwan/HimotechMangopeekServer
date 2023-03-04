@@ -5,10 +5,10 @@ const router = express.Router()
 const {verifyToken}=require('../middleware/auth');
 
 const {AddConversation, getConversation, getFind} = require("../controllers/ChatController/Conversation")
-const {AddMessage, getMessage} = require ("../controllers/ChatController/Message")
+const {AddMessage, getMessage, DeleteGetMessage} = require ("../controllers/ChatController/Message")
 const {AddPost, putPost, like} = require("../controllers/ChatController/Post")
 const {AddComments, getcomments} = require("../controllers/ChatController/Comments")
-const {getUser,getFriends, follow , unFollow} = require("../controllers/ChatController/Users")
+const {getUser,getFriends,getFollowigUsers, follow , unFollow} = require("../controllers/ChatController/Users")
 
 
 
@@ -127,6 +127,8 @@ router.post("/AddMessage", AddMessage)
  */
 
 router.get("/getMessage", getMessage)
+router.delete("/DeleteGetMessage", DeleteGetMessage)
+
 
 
 
@@ -177,7 +179,9 @@ router.put("/like/:id", like)
 router.get("/getUser", getUser)
 router.put("/follow", follow)
 router.put("/unFollow", unFollow)
-router.get("/getFriends/:userId", getFriends)
+router.get("/getFriends", getFriends)
+router.get("/getFollowigUsers", getFollowigUsers)
+
 
 
 

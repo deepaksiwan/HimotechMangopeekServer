@@ -44,7 +44,7 @@ const getUser = async(req, res) => {
 
 const getFriends = async(req, res) => {
   try {
-     const user = await profileModel.findById(req.params.userId);
+     const user = await profileModel.findById(req.query.userId);
     // console.log("user", user)
      const friends = await Promise.all(
        user.followers.map((friendId) => {
@@ -56,12 +56,34 @@ const getFriends = async(req, res) => {
        const { _id, userName, profilePic } = friend;
        friendList.push({ _id, userName, profilePic });
      });
-     res.status(200).json(friendList)
+     res.status(200).json({success: true,friendList})
    } catch (err) {
      res.status(500).json(err);
    }
 
 }
+
+const getFollowigUsers = async(req, res) => {
+  try {
+     const user = await profileModel.findById(req.query.userId);
+    // console.log("user", user)
+     const friends = await Promise.all(
+       user.followings.map((friendId) => {
+         return profileModel.findById(friendId);
+       })
+     );
+     let followingList = [];
+     friends.map((friend) => {
+       const { _id, userName, profilePic } = friend;
+       followingList.push({ _id, userName, profilePic });
+     });
+     res.status(200).json({success: true,followingList})
+   } catch (err) {
+     res.status(500).json(err);
+   }
+
+}
+
 
 //follower put api
 const follow = async(req, res) => {
@@ -120,7 +142,8 @@ module.exports = {
    getUser,
    getFriends,
    follow,
-   unFollow
+   unFollow,
+   getFollowigUsers
    
 }
 

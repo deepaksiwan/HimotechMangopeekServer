@@ -12,7 +12,7 @@ const mongoose = require("mongoose");
 //       },
 //     },
 //   ],
-  
+
 // },
 // { timestamps: true }
 
@@ -20,18 +20,28 @@ const mongoose = require("mongoose");
 const ConversationSchema = new mongoose.Schema(
   {
     members: {
-      type:Array,
+      type: Array,
+      messages: [{
+        lastMessasgeShow: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Message"
+        },
+      }],
+      
     },
-  //   members:[{
-  //     senderId: {
-  //       type: mongoose.Schema.Types.ObjectId,
-  //       ref: "Profile",
-  //     },
-  //     receiverId: {
-  //       type: mongoose.Schema.Types.ObjectId,
-  //       ref: "Profile",
-  //     },
-  // }]
+   
+
+    
+    //   members:[{
+    //     senderId: {
+    //       type: mongoose.Schema.Types.ObjectId,
+    //       ref: "Profile",
+    //     },
+    //     receiverId: {
+    //       type: mongoose.Schema.Types.ObjectId,
+    //       ref: "Profile",
+    //     },
+    // }]
   },
   { timestamps: true }
 );

@@ -17,15 +17,14 @@ const signup = async (req, res, next) => {
         password: Joi.string().required(),
         conformPassword: Joi.string().required(),
 
-    }
-    console.log("validationSchema", validationSchema)
+        }
+        console.log("validationSchema", validationSchema)
     try {
         const validatedBody = await Joi.validate(req.body, validationSchema);
         const {firstName, userName,email,lastName, password, conformPassword } = validatedBody
          console.log(validatedBody);
         const user = await ProfileModel.findOne({ $or: [{ userName: userName },{ email: email }] })
         
-        console.log("user", user)
         if (user) {
             return res.json({ responseCode: responseCodes.ALREADY_EXIST, responseMessage: responseMessage.USER_ALREADY })
         } else {
@@ -64,15 +63,15 @@ const signup = async (req, res, next) => {
 
 const login = async (req, res) => {
     const validationSchema = {
-        userName: Joi.string(),
+        // userName: Joi.string(),
         email: Joi.string(),
         password: Joi.string().required()
 
     }
     try {
         const validatedBody = await Joi.validate(req.body, validationSchema);
-        const {userName, email, password } = validatedBody
-        const user = await ProfileModel.findOne({$or:[{userName:userName},{email:email}]});
+        const { email, password } = validatedBody
+        const user = await ProfileModel.findOne({$or:[{email:email}]});
         console.log("user", user)
 
 
